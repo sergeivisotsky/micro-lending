@@ -5,7 +5,9 @@ import org.sergei.microlending.jpa.model.User;
 import org.sergei.microlending.jpa.model.mappers.LoanModelMapper;
 import org.sergei.microlending.jpa.repository.LoanRepository;
 import org.sergei.microlending.jpa.repository.UserRepository;
+import org.sergei.microlending.rest.dto.ErrorMessageDTO;
 import org.sergei.microlending.rest.dto.LoanDTO;
+import org.sergei.microlending.rest.dto.ResponseDTO;
 import org.sergei.microlending.rest.dto.mappers.LoanDTOListMapper;
 import org.sergei.microlending.rest.dto.mappers.LoanDTOMapper;
 import org.sergei.microlending.rest.dto.request.LoanRequestDTO;
@@ -41,7 +43,7 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public LoanDTO createLoan(LoanRequestDTO request) {
+    public ResponseDTO<LoanDTO> createLoan(LoanRequestDTO request) {
         final Integer maxLoanAmount = 1_000_000;
         LocalTime time = LocalTime.now();
         Double amount = request.getAmount();
@@ -56,24 +58,75 @@ public class LoanServiceImpl implements LoanService {
                             .user(user.get())
                             .build();
                     Loan savedLoan = loanRepository.save(loan);
-                    return loanDTOMapper.apply(savedLoan);
+                    return ResponseDTO.<LoanDTO>builder()
+                            .errors(List.of())
+                            .response(List.of(loanDTOMapper.apply(savedLoan)))
+                            .build();
                 } else {
-                    throw new RuntimeException("User with this ID not found");
+                    return ResponseDTO.<LoanDTO>builder()
+                            .errors(List.of(
+                                    ErrorMessageDTO.builder()
+                                            .errorCode("USER_NOT_FOUND")
+                                            .errorMsg("User with this ID not found")
+                                            .stacktrace(null)
+                                            .build()))
+                            .response(List.of())
+                            .build();
                 }
             } else {
-                throw new RuntimeException("Loan cannot be made before 00:00");
+                return ResponseDTO.<LoanDTO>builder()
+                        .errors(List.of(
+                                ErrorMessageDTO.builder()
+                                        .errorCode("TIME_ERROR")
+                                        .errorMsg("Loan cannot be made before 00:00")
+                                        .stacktrace(null)
+                                        .build()))
+                        .response(List.of())
+                        .build();
             }
         } else {
-            throw new RuntimeException("Loan amount is greater than max allowed loan amount");
+            return ResponseDTO.<LoanDTO>builder()
+                    .errors(List.of(
+                            ErrorMessageDTO.builder()
+                                    .errorCode("AMOUNT_ERROR")
+                                    .errorMsg("Loan amount is greater than max allowed loan amount")
+                                    .stacktrace(null)
+                                    .build()))
+                    .response(List.of())
+                    .build();
         }
     }
 
     @Override
-    public List<LoanDTO> getLoansForUser(Long userId) {
-        List<Loan> loans = loanRepository.findAllByUserId(userId);
-        if (loans == null) {
-            throw new RuntimeException("User has not done any loan");
+    public ResponseDTO<LoanDTO> getLoansForUser(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            List<Loan> loans = loanRepository.findAllByUserId(user.get().getId());
+            if (loans == null) {
+                return ResponseDTO.<LoanDTO>builder()
+                        .errors(List.of(
+                                ErrorMessageDTO.builder()
+                                        .errorCode("USER_HAS_NO_LOAN")
+                                        .errorMsg("User has not done any loan")
+                                        .stacktrace(null)
+                                        .build()))
+                        .response(List.of())
+                        .build();
+            }
+            return ResponseDTO.<LoanDTO>builder()
+                    .errors(List.of())
+                    .response(loanDTOListMapper.apply(loans))
+                    .build();
+        } else {
+            return ResponseDTO.<LoanDTO>builder()
+                    .errors(List.of(
+                            ErrorMessageDTO.builder()
+                                    .errorCode("USER_NOT_FOUND")
+                                    .errorMsg("User with this ID not found")
+                                    .stacktrace(null)
+                                    .build()))
+                    .response(List.of())
+                    .build();
         }
-        return loanDTOListMapper.apply(loans);
     }
 }

@@ -3,6 +3,8 @@ package org.sergei.microlending.service;
 import org.sergei.microlending.jpa.model.User;
 import org.sergei.microlending.jpa.model.mappers.UserModelMapper;
 import org.sergei.microlending.jpa.repository.UserRepository;
+import org.sergei.microlending.rest.dto.ErrorMessageDTO;
+import org.sergei.microlending.rest.dto.ResponseDTO;
 import org.sergei.microlending.rest.dto.UserDTO;
 import org.sergei.microlending.rest.dto.mappers.UserDTOListMapper;
 import org.sergei.microlending.rest.dto.mappers.UserDTOMapper;
@@ -21,7 +23,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserDTOMapper userDTOMapper;
     private final UserDTOListMapper userDTOListMapper;
-    private final UserModelMapper userModeLMapper;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
@@ -31,27 +32,36 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.userDTOMapper = userDTOMapper;
         this.userDTOListMapper = userDTOListMapper;
-        this.userModeLMapper = userModeLMapper;
     }
 
     @Override
-    public List<UserDTO> getAllUsers() {
+    public ResponseDTO<UserDTO> getAllUsers() {
         List<User> userList = userRepository.findAll();
-        return userDTOListMapper.apply(userList);
+        return ResponseDTO.<UserDTO>builder()
+                .errors(List.of())
+                .response(userDTOListMapper.apply(userList))
+                .build();
     }
 
     @Override
-    public UserDTO getUserById(Long userId) {
+    public ResponseDTO<UserDTO> getUserById(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            return userDTOMapper.apply(user.get());
+            return ResponseDTO.<UserDTO>builder()
+                    .errors(List.of())
+                    .response(List.of(userDTOMapper.apply(user.get())))
+                    .build();
         } else {
-            throw new RuntimeException("User with this ID not found");
+            return ResponseDTO.<UserDTO>builder()
+                    .errors(List.of(
+                            ErrorMessageDTO.builder()
+                                    .errorCode("USER_NOT_FOUND")
+                                    .errorMsg("User with this ID not found")
+                                    .stacktrace(null)
+                                    .build()))
+                    .response(List.of())
+                    .build();
+
         }
-    }
-
-    @Override
-    public void saveUser(UserDTO request) {
-
     }
 }
