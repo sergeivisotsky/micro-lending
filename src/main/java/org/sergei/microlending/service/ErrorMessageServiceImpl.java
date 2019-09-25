@@ -3,6 +3,7 @@ package org.sergei.microlending.service;
 import org.sergei.microlending.jpa.model.ErrorMessage;
 import org.sergei.microlending.jpa.repository.ErrorMessageRepository;
 import org.sergei.microlending.rest.dto.ErrorMessageDTO;
+import org.sergei.microlending.service.interfaces.ErrorMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

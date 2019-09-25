@@ -1,4 +1,4 @@
-package org.sergei.microlending.service;
+package org.sergei.microlending.service.interfaces;
 
 import org.sergei.microlending.rest.dto.LoanDTO;
 import org.sergei.microlending.rest.dto.ResponseDTO;

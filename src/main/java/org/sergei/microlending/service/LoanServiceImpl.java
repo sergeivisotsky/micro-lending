@@ -12,6 +12,8 @@ import org.sergei.microlending.rest.dto.ResponseDTO;
 import org.sergei.microlending.rest.dto.mappers.LoanDTOListMapper;
 import org.sergei.microlending.rest.dto.mappers.LoanDTOMapper;
 import org.sergei.microlending.rest.dto.request.LoanRequestDTO;
+import org.sergei.microlending.service.interfaces.ErrorMessageService;
+import org.sergei.microlending.service.interfaces.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +35,7 @@ public class LoanServiceImpl implements LoanService {
     private final LoanModelMapper loanModelMapper;
 
     @Autowired
-    public LoanServiceImpl(ErrorMessageRepository errorMessageRepository,
-                           ErrorMessageService errorMessageService,
+    public LoanServiceImpl(ErrorMessageService errorMessageService,
                            LoanRepository loanRepository,
                            UserRepository userRepository,
                            LoanDTOMapper loanDTOMapper,

@@ -7,6 +7,8 @@ import org.sergei.microlending.rest.dto.ResponseDTO;
 import org.sergei.microlending.rest.dto.UserDTO;
 import org.sergei.microlending.rest.dto.mappers.UserDTOListMapper;
 import org.sergei.microlending.rest.dto.mappers.UserDTOMapper;
+import org.sergei.microlending.service.interfaces.ErrorMessageService;
+import org.sergei.microlending.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

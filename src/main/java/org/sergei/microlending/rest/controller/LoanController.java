@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.sergei.microlending.rest.dto.LoanDTO;
 import org.sergei.microlending.rest.dto.ResponseDTO;
 import org.sergei.microlending.rest.dto.request.LoanRequestDTO;
-import org.sergei.microlending.service.LoanService;
+import org.sergei.microlending.service.interfaces.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
