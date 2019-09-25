@@ -1,0 +1,11 @@
+{
+  "errors": [],
+  "response": [
+    {
+      "id": 2,
+      "firstName": "Sergei",
+      "lastName": "Visotsky",
+      "loans": null
+    }
+  ]
+}
