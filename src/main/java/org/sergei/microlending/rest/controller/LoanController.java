@@ -26,7 +26,7 @@ public class LoanController {
     }
 
     @ApiOperation(value = "Get all loand made by concrete user")
-    @GetMapping(value = "/getloanforuser", produces = "application/json")
+    @GetMapping(value = "/getloansforuser", produces = "application/json")
     public ResponseEntity<ResponseDTO<LoanDTO>> getLoansForUser(@RequestParam("userId") Long userId) {
         return new ResponseEntity<>(loanService.getLoansForUser(userId), HttpStatus.OK);
     }
@@ -34,7 +34,7 @@ public class LoanController {
     @ApiOperation(value = "Create loan for a specific user")
     @PostMapping(value = "/saveloanforuser", produces = "application/json", consumes = "application/json")
     public ResponseEntity<ResponseDTO<LoanDTO>> saveLoanForUser(@RequestBody LoanRequestDTO request) {
-        return new ResponseEntity<>(loanService.createLoan(request), HttpStatus.OK);
+        return new ResponseEntity<>(loanService.createLoan(request), HttpStatus.CREATED);
     }
 
 }

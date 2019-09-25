@@ -32,23 +32,18 @@ public class LoanServiceImpl implements LoanService {
     private final UserRepository userRepository;
     private final LoanDTOMapper loanDTOMapper;
     private final LoanDTOListMapper loanDTOListMapper;
-    private final LoanModelMapper loanModelMapper;
-    private final HttpServletRequest request;
 
     @Autowired
     public LoanServiceImpl(ErrorMessageService errorMessageService,
                            LoanRepository loanRepository,
                            UserRepository userRepository,
                            LoanDTOMapper loanDTOMapper,
-                           LoanDTOListMapper loanDTOListMapper,
-                           LoanModelMapper loanModelMapper, HttpServletRequest request) {
+                           LoanDTOListMapper loanDTOListMapper) {
         this.errorMessageService = errorMessageService;
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
         this.loanDTOMapper = loanDTOMapper;
         this.loanDTOListMapper = loanDTOListMapper;
-        this.loanModelMapper = loanModelMapper;
-        this.request = request;
     }
 
     @Override
@@ -64,7 +59,6 @@ public class LoanServiceImpl implements LoanService {
                     Loan loan = Loan.builder()
                             .term(request.getTerm())
                             .amount(request.getAmount())
-                            .ipAddress(identifyUserIp())
                             .user(user.get())
                             .build();
                     Loan savedLoan = loanRepository.save(loan);
@@ -103,9 +97,5 @@ public class LoanServiceImpl implements LoanService {
             List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("USR_001");
             return new ResponseDTO<>(errorMessages, List.of());
         }
-    }
-
-    protected String identifyUserIp() {
-        return request.getHeader("X-FORWARDED-FOR");
     }
 }

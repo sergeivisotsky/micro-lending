@@ -1,0 +1,20 @@
+{
+  "errors": [],
+  "response": [
+    {
+      "id": 1,
+      "term": 120,
+      "amount": 20
+    },
+    {
+      "id": 2,
+      "term": 51,
+      "amount": 5
+    },
+    {
+      "id": 3,
+      "term": 40,
+      "amount": 3
+    }
+  ]
+}
