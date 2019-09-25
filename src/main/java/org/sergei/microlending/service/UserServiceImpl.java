@@ -1,7 +1,6 @@
 package org.sergei.microlending.service;
 
 import org.sergei.microlending.jpa.model.User;
-import org.sergei.microlending.jpa.model.mappers.UserModelMapper;
 import org.sergei.microlending.jpa.repository.UserRepository;
 import org.sergei.microlending.rest.dto.ErrorMessageDTO;
 import org.sergei.microlending.rest.dto.ResponseDTO;
@@ -21,15 +20,17 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final ErrorMessageService errorMessageService;
     private final UserDTOMapper userDTOMapper;
     private final UserDTOListMapper userDTOListMapper;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
+                           ErrorMessageService errorMessageService,
                            UserDTOMapper userDTOMapper,
-                           UserDTOListMapper userDTOListMapper,
-                           UserModelMapper userModeLMapper) {
+                           UserDTOListMapper userDTOListMapper) {
         this.userRepository = userRepository;
+        this.errorMessageService = errorMessageService;
         this.userDTOMapper = userDTOMapper;
         this.userDTOListMapper = userDTOListMapper;
     }
@@ -52,16 +53,8 @@ public class UserServiceImpl implements UserService {
                     .response(List.of(userDTOMapper.apply(user.get())))
                     .build();
         } else {
-            return ResponseDTO.<UserDTO>builder()
-                    .errors(List.of(
-                            ErrorMessageDTO.builder()
-                                    .errorCode("USER_NOT_FOUND")
-                                    .errorMsg("User with this ID not found")
-                                    .stacktrace(null)
-                                    .build()))
-                    .response(List.of())
-                    .build();
-
+            List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("USR_001");
+            return new ResponseDTO<>(errorMessages, List.of());
         }
     }
 }

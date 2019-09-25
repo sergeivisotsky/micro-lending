@@ -3,6 +3,7 @@ package org.sergei.microlending.service;
 import org.sergei.microlending.jpa.model.Loan;
 import org.sergei.microlending.jpa.model.User;
 import org.sergei.microlending.jpa.model.mappers.LoanModelMapper;
+import org.sergei.microlending.jpa.repository.ErrorMessageRepository;
 import org.sergei.microlending.jpa.repository.LoanRepository;
 import org.sergei.microlending.jpa.repository.UserRepository;
 import org.sergei.microlending.rest.dto.ErrorMessageDTO;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @Service
 public class LoanServiceImpl implements LoanService {
 
+    private final ErrorMessageService errorMessageService;
     private final LoanRepository loanRepository;
     private final UserRepository userRepository;
     private final LoanDTOMapper loanDTOMapper;
@@ -31,10 +33,14 @@ public class LoanServiceImpl implements LoanService {
     private final LoanModelMapper loanModelMapper;
 
     @Autowired
-    public LoanServiceImpl(LoanRepository loanRepository,
+    public LoanServiceImpl(ErrorMessageRepository errorMessageRepository,
+                           ErrorMessageService errorMessageService,
+                           LoanRepository loanRepository,
                            UserRepository userRepository,
                            LoanDTOMapper loanDTOMapper,
-                           LoanDTOListMapper loanDTOListMapper, LoanModelMapper loanModelMapper) {
+                           LoanDTOListMapper loanDTOListMapper,
+                           LoanModelMapper loanModelMapper) {
+        this.errorMessageService = errorMessageService;
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
         this.loanDTOMapper = loanDTOMapper;
@@ -63,37 +69,16 @@ public class LoanServiceImpl implements LoanService {
                             .response(List.of(loanDTOMapper.apply(savedLoan)))
                             .build();
                 } else {
-                    return ResponseDTO.<LoanDTO>builder()
-                            .errors(List.of(
-                                    ErrorMessageDTO.builder()
-                                            .errorCode("USER_NOT_FOUND")
-                                            .errorMsg("User with this ID not found")
-                                            .stacktrace(null)
-                                            .build()))
-                            .response(List.of())
-                            .build();
+                    List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("USR_001");
+                    return new ResponseDTO<>(errorMessages, List.of());
                 }
             } else {
-                return ResponseDTO.<LoanDTO>builder()
-                        .errors(List.of(
-                                ErrorMessageDTO.builder()
-                                        .errorCode("TIME_ERROR")
-                                        .errorMsg("Loan cannot be made before 00:00")
-                                        .stacktrace(null)
-                                        .build()))
-                        .response(List.of())
-                        .build();
+                List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("LON_001");
+                return new ResponseDTO<>(errorMessages, List.of());
             }
         } else {
-            return ResponseDTO.<LoanDTO>builder()
-                    .errors(List.of(
-                            ErrorMessageDTO.builder()
-                                    .errorCode("AMOUNT_ERROR")
-                                    .errorMsg("Loan amount is greater than max allowed loan amount")
-                                    .stacktrace(null)
-                                    .build()))
-                    .response(List.of())
-                    .build();
+            List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("LON_002");
+            return new ResponseDTO<>(errorMessages, List.of());
         }
     }
 
@@ -103,30 +88,16 @@ public class LoanServiceImpl implements LoanService {
         if (user.isPresent()) {
             List<Loan> loans = loanRepository.findAllByUserId(user.get().getId());
             if (loans == null) {
-                return ResponseDTO.<LoanDTO>builder()
-                        .errors(List.of(
-                                ErrorMessageDTO.builder()
-                                        .errorCode("USER_HAS_NO_LOAN")
-                                        .errorMsg("User has not done any loan")
-                                        .stacktrace(null)
-                                        .build()))
-                        .response(List.of())
-                        .build();
+                List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("USR_002");
+                return new ResponseDTO<>(errorMessages, List.of());
             }
             return ResponseDTO.<LoanDTO>builder()
                     .errors(List.of())
                     .response(loanDTOListMapper.apply(loans))
                     .build();
         } else {
-            return ResponseDTO.<LoanDTO>builder()
-                    .errors(List.of(
-                            ErrorMessageDTO.builder()
-                                    .errorCode("USER_NOT_FOUND")
-                                    .errorMsg("User with this ID not found")
-                                    .stacktrace(null)
-                                    .build()))
-                    .response(List.of())
-                    .build();
+            List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("USR_001");
+            return new ResponseDTO<>(errorMessages, List.of());
         }
     }
 }

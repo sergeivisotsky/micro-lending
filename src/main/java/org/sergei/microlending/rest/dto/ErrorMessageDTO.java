@@ -15,5 +15,4 @@ import lombok.NoArgsConstructor;
 public class ErrorMessageDTO {
     private String errorCode;
     private String errorMsg;
-    private String stacktrace;
 }
