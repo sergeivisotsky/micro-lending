@@ -3,7 +3,6 @@ package org.sergei.microlending.service;
 import org.sergei.microlending.jpa.model.Loan;
 import org.sergei.microlending.jpa.model.User;
 import org.sergei.microlending.jpa.model.mappers.LoanModelMapper;
-import org.sergei.microlending.jpa.repository.ErrorMessageRepository;
 import org.sergei.microlending.jpa.repository.LoanRepository;
 import org.sergei.microlending.jpa.repository.UserRepository;
 import org.sergei.microlending.rest.dto.ErrorMessageDTO;
@@ -17,6 +16,7 @@ import org.sergei.microlending.service.interfaces.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +33,7 @@ public class LoanServiceImpl implements LoanService {
     private final LoanDTOMapper loanDTOMapper;
     private final LoanDTOListMapper loanDTOListMapper;
     private final LoanModelMapper loanModelMapper;
+    private final HttpServletRequest request;
 
     @Autowired
     public LoanServiceImpl(ErrorMessageService errorMessageService,
@@ -40,13 +41,14 @@ public class LoanServiceImpl implements LoanService {
                            UserRepository userRepository,
                            LoanDTOMapper loanDTOMapper,
                            LoanDTOListMapper loanDTOListMapper,
-                           LoanModelMapper loanModelMapper) {
+                           LoanModelMapper loanModelMapper, HttpServletRequest request) {
         this.errorMessageService = errorMessageService;
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
         this.loanDTOMapper = loanDTOMapper;
         this.loanDTOListMapper = loanDTOListMapper;
         this.loanModelMapper = loanModelMapper;
+        this.request = request;
     }
 
     @Override
@@ -62,6 +64,7 @@ public class LoanServiceImpl implements LoanService {
                     Loan loan = Loan.builder()
                             .term(request.getTerm())
                             .amount(request.getAmount())
+                            .ipAddress(identifyUserIp())
                             .user(user.get())
                             .build();
                     Loan savedLoan = loanRepository.save(loan);
@@ -100,5 +103,9 @@ public class LoanServiceImpl implements LoanService {
             List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("USR_001");
             return new ResponseDTO<>(errorMessages, List.of());
         }
+    }
+
+    protected String identifyUserIp() {
+        return request.getHeader("X-FORWARDED-FOR");
     }
 }

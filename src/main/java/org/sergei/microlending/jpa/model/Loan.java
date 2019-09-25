@@ -36,6 +36,9 @@ public class Loan implements Serializable {
     @Column(name = "amount")
     private Double amount;
 
+    @Column(name = "ip_addr")
+    private String ipAddress;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 }
