@@ -17,6 +17,14 @@
 - How simple it is to run the application (embedded DB/embedded container)
 - Use of spring-boot provided in this template is not obligatory, you are free to choose any other framework.
 
+#### Technologies used in solution
+* Java 11
+* Spring Boot
+* Maven
+* Jackson
+* Lombok
+* JUnit
+
 ## What gets evaluated
 - Requirements are met
 - Code quality (both production and test)
