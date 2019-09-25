@@ -24,6 +24,7 @@
 * Jackson
 * Lombok
 * JUnit
+* Swagger UI
 
 ## What gets evaluated
 - Requirements are met
