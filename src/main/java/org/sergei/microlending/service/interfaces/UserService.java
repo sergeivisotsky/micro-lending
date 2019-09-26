@@ -9,7 +9,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface UserService {
+
+    /**
+     * Get all existing users
+     *
+     * @return collection of users wrapped in response
+     */
     ResponseDTO<UserDTO> getAllUsers();
 
+    /**
+     * Get specific user
+     *
+     * @param userId userId
+     * @return User
+     */
     ResponseDTO<UserDTO> getUserById(Long userId);
 }
