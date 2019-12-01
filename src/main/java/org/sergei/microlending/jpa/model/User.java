@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -18,17 +17,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
 public class User implements Serializable {
     private static final long serialVersionUID = -4617101805358011208L;
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "user_id_seq")
     @SequenceGenerator(name = "user_id_seq",
             sequenceName = "user_id_seq", allocationSize = 1)
-    @Column(name = "id")
     private Long id;
 
     @Column(name = "first_name")
