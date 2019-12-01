@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 public class TestUtils {
 
     public static String readFromJSONFile(String fileName) {
-//        ObjectMapper objectMapper = new ObjectMapper();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         try (InputStream inputStream = classLoader.getResourceAsStream(fileName)) {
             if (inputStream != null) {
