@@ -31,11 +31,8 @@ public class ErrorMessageServiceImpl implements ErrorMessageService {
         List<ErrorMessage> responseMessageList = errorMessageRepository.findErrorMessageByCode(code);
 
         List<ErrorMessageDTO> responseErrorList = new ArrayList<>();
-        responseMessageList.forEach(
-                errorMessage ->
-                        responseErrorList.add(
-                                new ErrorMessageDTO(errorMessage.getCode(), errorMessage.getMessage()))
-        );
+        responseMessageList.forEach(errorMessage ->
+                responseErrorList.add(new ErrorMessageDTO(errorMessage.getCode(), errorMessage.getMessage())));
 
         return responseErrorList;
     }

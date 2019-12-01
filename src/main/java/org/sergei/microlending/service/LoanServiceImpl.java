@@ -84,7 +84,7 @@ public class LoanServiceImpl implements LoanService {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             List<Loan> loans = loanRepository.findAllByUserId(user.get().getId());
-            if (loans == null) {
+            if (loans.isEmpty()) {
                 List<ErrorMessageDTO> errorMessages = errorMessageService.responseErrorListByCode("USR_002");
                 return new ResponseDTO<>(errorMessages, List.of());
             }
