@@ -10,7 +10,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface LoanService {
+    /**
+     * Create a loan for the user
+     *
+     * @param request loan request
+     * @return created loan
+     */
     ResponseDTO<LoanDTO> createLoan(LoanRequestDTO request);
 
+    /**
+     * Get all loans that was created by specific user
+     *
+     * @param userId by which loans should be found
+     * @return Response with all the loans
+     */
     ResponseDTO<LoanDTO> getLoansForUser(Long userId);
 }

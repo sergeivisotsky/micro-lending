@@ -2,7 +2,6 @@ package org.sergei.microlending.service;
 
 import org.sergei.microlending.jpa.model.Loan;
 import org.sergei.microlending.jpa.model.User;
-import org.sergei.microlending.jpa.model.mappers.LoanModelMapper;
 import org.sergei.microlending.jpa.repository.LoanRepository;
 import org.sergei.microlending.jpa.repository.UserRepository;
 import org.sergei.microlending.rest.dto.ErrorMessageDTO;
@@ -16,7 +15,6 @@ import org.sergei.microlending.service.interfaces.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -51,9 +49,10 @@ public class LoanServiceImpl implements LoanService {
         final Integer maxLoanAmount = 1_000_000;
         LocalTime time = LocalTime.now();
         Double amount = request.getAmount();
+        // Time limit - 00:00 before which loan cannot be created
         boolean timeLimit = time.isAfter(LocalTime.of(0, 0, 0, 0));
-        if (amount <= maxLoanAmount) {
-            if (timeLimit) {
+        if (amount <= maxLoanAmount) { // Check if provided amount is less than max loan amount
+            if (timeLimit) { // Check for the time limit
                 Optional<User> user = userRepository.findById(request.getUserId());
                 if (user.isPresent()) {
                     Loan loan = Loan.builder()

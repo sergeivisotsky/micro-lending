@@ -37,6 +37,9 @@ public class UserServiceImpl implements UserService {
         this.userDTOListMapper = userDTOListMapper;
     }
 
+    /**
+     * {@link UserService#getAllUsers()}
+     */
     @Override
     public ResponseDTO<UserDTO> getAllUsers() {
         List<User> userList = userRepository.findAll();
@@ -46,6 +49,9 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    /**
+     * {@link UserService#getUserById(Long)}
+     */
     @Override
     public ResponseDTO<UserDTO> getUserById(Long userId) {
         Optional<User> user = userRepository.findById(userId);

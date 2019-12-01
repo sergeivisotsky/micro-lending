@@ -23,6 +23,9 @@ public class ErrorMessageServiceImpl implements ErrorMessageService {
         this.errorMessageRepository = errorMessageRepository;
     }
 
+    /**
+     * {@link ErrorMessageService#responseErrorListByCode(String)}
+     */
     @Override
     public List<ErrorMessageDTO> responseErrorListByCode(String code) {
         List<ErrorMessage> responseMessageList = errorMessageRepository.findErrorMessageByCode(code);
